@@ -41,6 +41,8 @@ public class AddEditTaskActivity extends AppCompatActivity implements AddEditTas
 
     public static final String ADD_EDIT_VIEWMODEL_TAG = "ADD_EDIT_VIEWMODEL_TAG";
 
+    private AddEditTaskViewModel mViewModel;
+
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
@@ -72,10 +74,18 @@ public class AddEditTaskActivity extends AppCompatActivity implements AddEditTas
 
         AddEditTaskFragment addEditTaskFragment = findOrCreateViewFragment();
 
-        AddEditTaskViewModel viewModel = findOrCreateViewModel();
+        mViewModel = findOrCreateViewModel();
 
         // Link View and ViewModel
-        addEditTaskFragment.setViewModel(viewModel);
+        addEditTaskFragment.setViewModel(mViewModel);
+
+        mViewModel.onActivityCreated(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        mViewModel.onActivityDestroyed();
+        super.onDestroy();
     }
 
     @NonNull
@@ -114,8 +124,7 @@ public class AddEditTaskActivity extends AppCompatActivity implements AddEditTas
             // There is no ViewModel yet, create it.
             AddEditTaskViewModel viewModel = new AddEditTaskViewModel(
                     getApplicationContext(),
-                    Injection.provideTasksRepository(getApplicationContext()),
-                    this);
+                    Injection.provideTasksRepository(getApplicationContext()));
 
             // and bind it to this Activity's lifecycle using the Fragment Manager.
             ActivityUtils.addFragmentToActivity(

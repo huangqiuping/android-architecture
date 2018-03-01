@@ -20,7 +20,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SdkSuppress;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.test.suitebuilder.annotation.LargeTest;
+import android.support.test.filters.LargeTest;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ListView;
@@ -487,6 +487,33 @@ public class TasksScreenTest {
 
         // Verify previous task is not displayed
         onView(withItemText(TITLE1)).check(doesNotExist());
+    }
+
+    @Test
+    public void noTasks_AllTasksFilter_AddTaskViewVisible() {
+        // Given an empty list of tasks, make sure "All tasks" filter is on
+        viewAllTasks();
+
+        // Add task View should be displayed
+        onView(withId(R.id.noTasksAdd)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void noTasks_CompletedTasksFilter_AddTaskViewNotVisible() {
+        // Given an empty list of tasks, make sure "All tasks" filter is on
+        viewCompletedTasks();
+
+        // Add task View should be displayed
+        onView(withId(R.id.noTasksAdd)).check(matches(not(isDisplayed())));
+    }
+
+    @Test
+    public void noTasks_ActiveTasksFilter_AddTaskViewNotVisible() {
+        // Given an empty list of tasks, make sure "All tasks" filter is on
+        viewActiveTasks();
+
+        // Add task View should be displayed
+        onView(withId(R.id.noTasksAdd)).check(matches(not(isDisplayed())));
     }
 
     private void viewAllTasks() {

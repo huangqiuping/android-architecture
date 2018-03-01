@@ -59,9 +59,16 @@ public class TasksActivity extends AppCompatActivity implements TaskItemNavigato
         TasksFragment tasksFragment = findOrCreateViewFragment();
 
         mViewModel = findOrCreateViewModel();
+        mViewModel.setNavigator(this);
 
         // Link View and ViewModel
         tasksFragment.setViewModel(mViewModel);
+    }
+
+    @Override
+    protected void onDestroy() {
+        mViewModel.onActivityDestroyed();
+        super.onDestroy();
     }
 
     private TasksViewModel findOrCreateViewModel() {
@@ -79,8 +86,7 @@ public class TasksActivity extends AppCompatActivity implements TaskItemNavigato
             // There is no ViewModel yet, create it.
             TasksViewModel viewModel = new TasksViewModel(
                     Injection.provideTasksRepository(getApplicationContext()),
-                    getApplicationContext(),
-                    this);
+                    getApplicationContext());
             // and bind it to this Activity's lifecycle using the Fragment Manager.
             ActivityUtils.addFragmentToActivity(
                     getSupportFragmentManager(),
@@ -143,8 +149,6 @@ public class TasksActivity extends AppCompatActivity implements TaskItemNavigato
                             case R.id.statistics_navigation_menu_item:
                                 Intent intent =
                                         new Intent(TasksActivity.this, StatisticsActivity.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                                        | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 startActivity(intent);
                                 break;
                             default:
